@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <checkout_cart_index>
+        <reference name="checkout.cart">
+            <block type="core/template" name="my_layout_block" template="my_layout/myblock.phtml" />
+        </reference>
+    </checkout_cart_index>
+</layout>

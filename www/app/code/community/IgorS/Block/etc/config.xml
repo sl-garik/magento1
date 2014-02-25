@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+    <modules>
+        <IgorS_Block>
+            <version>1.0.0</version>
+        </IgorS_Block>
+    </modules>
+
+    <frontend>
+        <routers>
+            <igors_block>
+                <use>standard</use>
+                <args>
+                    <module>IgorS_Block</module>
+                    <frontName>block</frontName>
+                </args>
+            </igors_block>
+        </routers>
+    </frontend>
+</config>
