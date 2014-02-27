@@ -20,5 +20,26 @@ class DS_News_IndexController extends Mage_Core_Controller_Front_Action
         $this->loadLayout();
         $this->renderLayout();
     }
+    public  function addToBase()
+    {
+        /*** Получение ресурсной модели */
+        $resource = Mage::getSingleton('core/resource');
+
+        /*** Установка соединения для записи */
+        $writeConnection = $resource->getConnection('core_write');
+
+        /*** Получение имени таблицы */
+        $table = $resource->getTableName('catalog/product');
+
+        /*** Установка product ID */
+        $newTit = 'new-tit';
+        $newCont = 'new-cont';
+        $newTime = time();
+
+        $query = 'INSERT INTO {$table}(title, content, created) VALUES("'.$newTit.'", "'.$newCont.'", "'.$newTime.'")';
+
+        /*** Выполнение запроса */
+        $writeConnection->query($query);
+    }
 
 }
