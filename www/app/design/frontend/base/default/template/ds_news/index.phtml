@@ -1,0 +1,29 @@
+<h1>Template ds_news/index.phtml</h1>
+
+<div class="block">
+<!--                                                                               --><?php //echo $this->getUrl('checkout/cart/couponPost') ?>
+    <form name="my-form" action="" method="post">
+    <div class="block-title">
+        <h2><?php echo $this->__('My block') ?></h2>
+        <div class="block-content">
+            <label for=""><?php echo $this->__('Enter your any data if you have one.') ?></label>
+            <div class="input-box">
+                <input class="input-text" type="text" name="myblock">
+                <div class="buttons-set">
+                    <button type="button"
+                            class="button"
+                            value="<?php echo $this->__('Apply Data') ?>">
+                        <span><span><?php echo $this->__('Apply Data') ?></span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+
+<?php
+$news = Mage::registry('news');
+foreach ($news as $item) {
+echo '<h2>' . $item['title'] . '</h2>';
+}
