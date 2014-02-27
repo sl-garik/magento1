@@ -20,26 +20,23 @@ class DS_News_IndexController extends Mage_Core_Controller_Front_Action
         $this->loadLayout();
         $this->renderLayout();
     }
-    public  function addToBase()
+    public  function add2baseAction()
     {
-        /*** Получение ресурсной модели */
-        $resource = Mage::getSingleton('core/resource');
-
-        /*** Установка соединения для записи */
-        $writeConnection = $resource->getConnection('core_write');
-
+        /*** Получение ресурсной модели *//*** Установка соединения для записи */
+        $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
         /*** Получение имени таблицы */
-        $table = $resource->getTableName('catalog/product');
+        $table = $connection->getTableName('ds_news_entities');
+        $connection->beginTransaction();
+        $fields = array();
+        $fields['title']= 'new_titl5';
+        $fields['content']='new_cont5';
+        $fields['created']= date('Y-m-d H:i:s');
 
-        /*** Установка product ID */
-        $newTit = 'new-tit';
-        $newCont = 'new-cont';
-        $newTime = time();
+        $connection->insert($table, $fields);
+        $connection->commit();
+        $this->loadLayout();
+        $this->renderLayout();
 
-        $query = 'INSERT INTO {$table}(title, content, created) VALUES("'.$newTit.'", "'.$newCont.'", "'.$newTime.'")';
-
-        /*** Выполнение запроса */
-        $writeConnection->query($query);
     }
 
 }
