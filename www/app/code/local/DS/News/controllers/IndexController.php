@@ -24,7 +24,8 @@ class DS_News_IndexController extends Mage_Core_Controller_Front_Action
 
         echo '<h1>News</h1>';
         foreach ($news as $item) {
-            echo '<h2><a href="' . $viewUrl . '?id=' . $item->getId() . '">' . $item->getTitle() . '</a></h2>';
+//            echo '<h2><a href="' . $viewUrl . '?id=' . $item->getId() . '">' . $item->getTitle() . '</a></h2>';
+            echo '<h2><a href="' . Mage::getUrl('news/index/view', array('id' => $item->getId())) . '">' . $item->getTitle() . '</a></h2>';
         }
     }
 
@@ -36,7 +37,7 @@ class DS_News_IndexController extends Mage_Core_Controller_Front_Action
         if ($news->getId() > 0) {
             echo '<h1>' . $news->getTitle() . '</h1>';
             echo '<div class="content">' . $news->getContent() . '</div>';
-            echo '<div class="content">' . $news->getCreate() . '</div>';
+            echo '<div class="content">' . $news->getCreated() . '</div>';
         } else {
             $this->_forward('noRoute');
         }
