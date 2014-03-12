@@ -1,25 +1,11 @@
-<h1>Template ds_news/index.phtml</h1>
-
 <?php
-$news = Mage::registry('news');
-foreach ($news as $item) {
-echo '<h2>' . $item['title'] . '</h2>';
-}
+$news = $this->getNewsCollection();
 ?>
-
-<div class="block">
-    <div class="block-title">
-        <h2><?php echo $this->__('My block') ?></h2>
-        <div class="block-content">
-            <form name="input" action="<?php echo $this->getUrl('news/index/add2base') ?>" method="post">
-                <label for=""><?php echo $this->__('Enter your any data if you have one.') ?></label>
-                <div>
-                    <input  class="input-text" type="text" name="myblock2">
-                </div>
-                <div class="buttons-set">
-                <input class="button" type="submit" value="<?php echo $this->__('Apply Data') ?>">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+    <h1>News</h1>
+<?php foreach ($news as $item): ?>
+    <h2>
+        <a href="<?php echo Mage::getUrl('news/index/view', array('id' => $item->getId())) ?>">
+            <?php echo $item->getTitle(); ?>
+        </a>
+    </h2>
+<?php endforeach; ?>
