@@ -16,9 +16,7 @@ class DS_News_IndexController extends Mage_Core_Controller_Front_Action
 
         if ($news->getId() > 0) {
             $this->loadLayout();
-            $this->getLayout()->getBlock('news.content')->assign(array(
-                "newsItem" => $news,
-            ));
+            $this->getLayout()->getBlock('news.content')->assign(array("newsItem" => $news,));
             $this->renderLayout();
         } else {
             $this->_forward('noRoute');

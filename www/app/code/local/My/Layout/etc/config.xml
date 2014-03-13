@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-<modules>
-    <My_Layout>
-        <version>0.0.1</version>
-    </My_Layout>
-</modules>
-<global>
-    <blocks>
-        <my_layout>
-            <class>My_Layout_Block</class>
-        </my_layout>
-    </blocks>
-</global>
-<frontend>
-    <layout>
-        <updates>
-            <my_layout module="My_Layout">
-                <file>my_layout.xml</file>
-            </my_layout>
-        </updates>
-    </layout>
-</frontend>
+    <modules>
+        <My_Layout>
+            <version>0.0.1</version>
+        </My_Layout>
+    </modules>
+    <frontend>
+        <layout>
+            <updates>
+                <my_layout module="My_Layout">
+                    <file>my_layout.xml</file>
+                </my_layout>
+            </updates>
+        </layout>
+    </frontend>
 </config>
