@@ -1,0 +1,16 @@
+<form name="my-test" action="<?php echo $this->getUrl('testdata') ?>" method="post">
+    <div class="discount">
+        <h2><?php echo $this->__('My block') ?></h2>
+        <label><?php echo $this->__('Enter your any data if you have one.') ?></label>
+
+        <div class="input-box">
+            <input class="input-text" type="text" name="myinput1">
+        </div>
+        <div class="input-box">
+            <input class="input-text" type="text" name="myinput2">
+        </div>
+        <div class="buttons-set">
+            <input type="submit" value="<?php echo $this->__('Apply Data') ?>">
+        </div>
+    </div>
+</form>

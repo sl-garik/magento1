@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<config>
+    <modules>
+        <IS_Test>
+            <version>0.0.1</version>
+        </IS_Test>
+    </modules>
+    <frontend>
+        <routers>
+            <istest>
+                <use>standard</use>
+                <args>
+                    <module>IS_Test</module>
+                    <frontName>testdata</frontName>
+                </args>
+            </istest>
+        </routers>
+        <layout>
+            <updates>
+                <is_test module="IS_Test">
+                    <file>is_test.xml</file>
+                </is_test>
+            </updates>
+        </layout>
+    </frontend>
+    <global>
+        <models>
+            <istest>
+                <class>IS_Test_Model</class>
+                <resourceModel>istest_resource</resourceModel>
+            </istest>
+            <istest_resource>
+                <class>IS_Test_Model_Resource</class>
+                <entities>
+                    <table_istest>
+                        <table>my_block</table>
+                    </table_istest>
+                </entities>
+            </istest_resource>
+        </models>
+    </global>
+</config>
