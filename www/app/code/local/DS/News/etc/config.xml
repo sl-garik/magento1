@@ -50,5 +50,30 @@
                 </setup>
             </dsnews_setup>
         </resources>
+        <helpers>
+            <dsnews>
+                <class>DS_News_Helper</class>
+            </dsnews>
+        </helpers>
     </global>
+    <adminhtml>
+        <layout>
+            <updates>
+                <dsnews>
+                    <file>dsnews/news.xml</file>
+                </dsnews>
+            </updates>
+        </layout>
+    </adminhtml>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <dsnews before="Mage_Adminhtml">DS_News_Adminhtml</dsnews>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
 </config>
