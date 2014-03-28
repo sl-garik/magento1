@@ -49,6 +49,17 @@ class IS_Test_Block_Adminhtml_Mydata_Grid extends Mage_Adminhtml_Block_Widget_Gr
             'escape'        => true,
         ));
 
+        $this->addColumn('email', array(
+            'header'        => Mage::helper('istest')->__('email'),
+            'align'         => 'left',
+            'filter_index'  => 'email',
+            'index'         => 'email',
+            'type'          => 'text',
+            'truncate'      => 50,
+            'escape'        => true,
+        ));
+
+
         $this->addColumn('action', array(
             'header'    => Mage::helper('freaks_quotes')->__('Action'),
             'width'     => '50px',
