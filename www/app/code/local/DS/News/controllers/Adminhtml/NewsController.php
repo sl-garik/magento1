@@ -4,12 +4,10 @@ class DS_News_Adminhtml_NewsController extends Mage_Adminhtml_Controller_Action
     public function indexAction()
     {
         $this->_title($this->__('News'));
-
         $this->loadLayout();
         $this->_setActiveMenu('dsnews');
         $this->_addBreadcrumb(Mage::helper('dsnews')->__('News'), Mage::helper('dsnews')->__('News'));
         $this->renderLayout();
-
     }
 
     public function newAction()
@@ -24,7 +22,6 @@ class DS_News_Adminhtml_NewsController extends Mage_Adminhtml_Controller_Action
     public function editAction()
     {
         $this->_title($this->__('Edit news'));
-
         $this->loadLayout();
         $this->_setActiveMenu('dsnews');
         $this->_addBreadcrumb(Mage::helper('dsnews')->__('Edit news'), Mage::helper('dsnews')->__('Edit news'));
@@ -38,7 +35,6 @@ class DS_News_Adminhtml_NewsController extends Mage_Adminhtml_Controller_Action
         try {
             Mage::getModel('dsnews/news')->setId($tipId)->delete();
             Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('dsnews')->__('news successfully deleted'));
-
             return $this->_redirect('*/*/');
         } catch (Mage_Core_Exception $e){
             Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
@@ -46,7 +42,6 @@ class DS_News_Adminhtml_NewsController extends Mage_Adminhtml_Controller_Action
             Mage::logException($e);
             Mage::getSingleton('adminhtml/session')->addError($this->__('Somethings went wrong'));
         }
-
         $this->_redirectReferer();
     }
 

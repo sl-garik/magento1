@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <istest translate="title" module="istest">
+            <title>ISTest</title>
+            <sort_order>55</sort_order>
+            <action>adminhtml/mydata</action>
+        </istest>
+    </menu>
+</config>

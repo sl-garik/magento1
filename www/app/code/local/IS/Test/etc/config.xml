@@ -24,6 +24,11 @@
         </layout>
     </frontend>
     <global>
+        <blocks>
+            <istest>
+                <class>IS_Test_Block</class>
+            </istest>
+        </blocks>
         <models>
             <istest>
                 <class>IS_Test_Model</class>
@@ -38,5 +43,30 @@
                 </entities>
             </istest_resource>
         </models>
+        <helpers>
+            <istest>
+                <class>IS_Test_Helper</class>
+            </istest>
+        </helpers>
     </global>
+    <adminhtml>
+        <layout>
+            <updates>
+                <istest>
+                    <file>istest/mydata.xml</file>
+                </istest>
+            </updates>
+        </layout>
+    </adminhtml>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <istest before="Mage_Adminhtml">IS_Test_Adminhtml</istest>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
 </config>

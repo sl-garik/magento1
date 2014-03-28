@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <adminhtml_mydata_index>
+        <reference name="content">
+            <block type="istest/adminhtml_mydata" name="mydata.grid_container" />
+        </reference>
+    </adminhtml_mydata_index>
+
+    <adminhtml_mydata_new>
+        <update handle="adminhtml_mydata_edit"/>
+    </adminhtml_mydata_new>
+
+    <adminhtml_mydata_edit>
+        <reference name="content">
+            <block type="freaks_mydata/adminhtml_edit" name="mydata.edit" />
+        </reference>
+    </adminhtml_mydata_edit>
+</layout>
