@@ -13,6 +13,11 @@
                     <module>IS_Test</module>
                     <frontName>testdata</frontName>
                 </args>
+                <use>standard</use>
+                <args>
+                    <module>IS_Test</module>
+                    <frontName>istestdata</frontName>
+                </args>
             </istest>
         </routers>
         <layout>
@@ -20,6 +25,9 @@
                 <is_test module="IS_Test">
                     <file>istest/is_test.xml</file>
                 </is_test>
+                <istest_my_account_link>
+                    <file>istest/my_account_link.xml</file>
+                </istest_my_account_link>
             </updates>
         </layout>
     </frontend>
