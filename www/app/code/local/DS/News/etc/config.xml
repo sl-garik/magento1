@@ -9,7 +9,7 @@
         <layout>
             <updates>
                 <dsnews>
-                    <file>ds_news.xml</file>
+                    <file>dsnews/ds_news.xml</file>
                 </dsnews>
             </updates>
         </layout>

@@ -9,7 +9,7 @@
         <layout>
             <updates>
                 <my_layout module="My_Layout">
-                    <file>my_layout.xml</file>
+                    <file>my/my_layout.xml</file>
                 </my_layout>
             </updates>
         </layout>
