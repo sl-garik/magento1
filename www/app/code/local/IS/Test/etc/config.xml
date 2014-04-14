@@ -11,11 +11,6 @@
                 <use>standard</use>
                 <args>
                     <module>IS_Test</module>
-                    <frontName>testdata</frontName>
-                </args>
-                <use>standard</use>
-                <args>
-                    <module>IS_Test</module>
                     <frontName>istestdata</frontName>
                 </args>
             </istest>

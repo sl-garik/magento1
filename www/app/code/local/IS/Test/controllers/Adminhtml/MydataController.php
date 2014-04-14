@@ -66,4 +66,9 @@ class IS_Test_Adminhtml_MydataController extends Mage_Adminhtml_Controller_Actio
         }
         $this->_redirect('*/*/');
     }
+
+    public function editAction()
+    {
+        $this->_redirectReferer();
+    }
 }

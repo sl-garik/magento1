@@ -1,4 +1,37 @@
-<h1>Hey look at me, I'm in a template</h1>
-<?php
-echo $this->methodblock();
-?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<?php $collection = $this->getCollection(); ?>
+
+<div class="page-title">
+    <h1>ISTest MyData</h1>
+</div>
+<?php echo $this->methodblock(); ?>
+<?php echo $this->getPagerHtml(); ?>
+<?php if ($collection->getSize()): ?>
+    <table class="data-table" id="my-orders-table">
+        <col width="1"/>
+        <col width="1"/>
+        <col width="1"/>
+        <col width="1"/>
+        <thead>
+        <tr>
+            <th><?php echo $this->__('ID') ?></th>
+            <th><?php echo $this->__('Pole1') ?></th>
+            <th><?php echo $this->__('Pole2') ?></th>
+            <th><?php echo $this->__('Email') ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($collection as $var): ?>
+            <tr>
+                <td><?php echo $var->getData('id'); ?></td>
+                <td><?php echo $var->getData('pole1'); ?></td>
+                <td><?php echo $var->getData('pole2'); ?></td>
+                <td><?php echo $var->getData('email'); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php echo $this->getPagerHtml(); ?>
+<?php else: ?>
+    <p><?php echo $this->__('You have placed no data.'); ?></p>
+<?php endif ?>
