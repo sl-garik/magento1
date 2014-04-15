@@ -12,10 +12,11 @@ class IS_Test_IndexController extends Mage_Core_Controller_Front_Action
             $contact->setData('pole2', $pol2);
 
             $customer = Mage::getSingleton('customer/session');
-            if ($customer->isLoggedIn())
+            if ($customer->isLoggedIn()) {
                 $contact->setData('email', $customer->getCustomer()->getEmail());
-            else
+            } else {
                 $contact->setData('email', 'guest');
+            }
 
             $contact->save();
         }

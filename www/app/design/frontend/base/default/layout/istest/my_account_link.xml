@@ -13,7 +13,9 @@
     <istest_view_index>
         <update handle="customer_account"/>
         <reference name="my.account.wrapper">
-            <block type="istest/myaccountdata" name="istest_myaccountdata" template="is_test/myaccountdata.phtml"/>
+            <block type="istest/myaccountdata" name="istest_myaccountdata" template="is_test/myaccountdata.phtml">
+                <block type="page/html_pager" name="custom.pager" />
+            </block>
         </reference>
 
         <reference name="my.account.wrapper">
