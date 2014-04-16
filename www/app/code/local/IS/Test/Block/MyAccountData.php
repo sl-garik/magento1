@@ -17,8 +17,6 @@ class IS_Test_Block_Myaccountdata extends Mage_Core_Block_Template
             $this->getCollection()->setOrder('id', 'DESC');
             $pager = $this->getChild('custom.pager');
             $pager->setCollection($this->getCollection());
-            $this->setChild('pager', $pager);
-            $this->getCollection()->load();
         }
 
         return parent::_beforeToHtml();
@@ -26,6 +24,6 @@ class IS_Test_Block_Myaccountdata extends Mage_Core_Block_Template
 
     public function getPagerHtml()
     {
-        return $this->getChildHtml('pager');
+        return $this->getChildHtml('custom.pager');
     }
 }
