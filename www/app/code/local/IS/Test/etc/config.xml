@@ -51,6 +51,29 @@
                 <class>IS_Test_Helper</class>
             </istest>
         </helpers>
+        <resources>
+            <istest_setup>
+                <setup>
+                    <module>IS_Test</module>
+                    <class>Mage_Eav_Model_Entity_Setup</class>
+                </setup>
+
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </istest_setup>
+
+            <istest_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </istest_write>
+            <istest_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </istest_read>
+        </resources>
     </global>
     <adminhtml>
         <layout>
