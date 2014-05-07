@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<config>
+    <modules>
+        <IS_CustTotal>
+            <version>0.0.1</version>
+        </IS_CustTotal>
+    </modules>
+    <global>
+        <models>
+            <custtotal>
+                <class>IS_CustTotal_Model</class>
+                <resourceModel>custtotal_mysql4</resourceModel>
+            </custtotal>
+            <custtotal_mysql4>
+                <class>IS_CustTotal_Model_Mysql4</class>
+                <entities>
+                    <custtotal>
+                        <table>zip_price</table>
+                    </custtotal>
+                </entities>
+            </custtotal_mysql4>
+        </models>
+        <helpers>
+            <custtotal>
+                <class>IS_CustTotal_Helper</class>
+            </custtotal>
+        </helpers>
+        <blocks>
+            <custtotal>
+                <class>IS_CustTotal_Block</class>
+            </custtotal>
+        </blocks>
+        <events>
+            <admin_system_config_changed_section_mycustom_section>
+                <observers>
+                    <custtotal>
+                        <type>singleton</type>
+                        <class>custtotal/observer</class>
+                        <method>handle_adminSystemConfigChangedSection</method>
+                    </custtotal>
+                </observers>
+            </admin_system_config_changed_section_mycustom_section>
+        </events>
+
+        <resources>
+            <istotal_setup>
+                <setup>
+                    <module>IS_CustTotal</module>
+                </setup>
+            </istotal_setup>
+        </resources>
+    </global>
+
+</config>

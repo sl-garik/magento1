@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config>
+    <modules>
+        <IS_CustTotal>
+            <active>true</active>
+            <codePool>local</codePool>
+        </IS_CustTotal>
+    </modules>
+</config>
