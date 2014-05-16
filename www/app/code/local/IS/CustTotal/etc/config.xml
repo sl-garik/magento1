@@ -29,6 +29,23 @@
             <custtotal>
                 <class>IS_CustTotal_Block</class>
             </custtotal>
+
+            <adminhtml>
+                <rewrite>
+                    <sales_order_totals>IS_CustTotal_Block_Adminhtml_Sales_Order</sales_order_totals>
+                    <sales_order_invoice_totals>IS_CustTotal_Block_Adminhtml_Sales_Invoice</sales_order_invoice_totals>
+                    <sales_order_creditmemo_totals>IS_CustTotal_Block_Adminhtml_Sales_Creditmemo
+                    </sales_order_creditmemo_totals>
+                </rewrite>
+            </adminhtml>
+            <sales>
+                <rewrite>
+                    <order_totals>IS_CustTotal_Block_Sales_Order</order_totals>
+                    <order_invoice_totals>IS_CustTotal_Block_Sales_Invoice</order_invoice_totals>
+                    <order_creditmemo_totals>IS_CustTotal_Block_Sales_Creditmemo</order_creditmemo_totals>
+                </rewrite>
+            </sales>
+
         </blocks>
         <events>
             <admin_system_config_changed_section_mycustom_section>
@@ -49,6 +66,32 @@
                 </setup>
             </istotal_setup>
         </resources>
-    </global>
 
+        <sales>
+            <quote>
+                <totals>
+                    <discount>
+                        <class>IS_CustTotal_Model_Discount</class>
+                        <after>subtotal</after>
+                    </discount>
+                </totals>
+            </quote>
+            <order_invoice>
+                <totals>
+                    <discount>
+                        <class>IS_CustTotal_Model_Invoice</class>
+                        <after>subtotal</after>
+                    </discount>
+                </totals>
+            </order_invoice>
+            <order_creditmemo>
+                <totals>
+                    <discount>
+                        <class>IS_CastTotal_Model_Creditmemo</class>
+                        <after>subtotal</after>
+                    </discount>
+                </totals>
+            </order_creditmemo>
+        </sales>
+    </global>
 </config>
