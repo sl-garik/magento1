@@ -34,8 +34,7 @@
                 <rewrite>
                     <sales_order_totals>IS_CustTotal_Block_Adminhtml_Sales_Order</sales_order_totals>
                     <sales_order_invoice_totals>IS_CustTotal_Block_Adminhtml_Sales_Invoice</sales_order_invoice_totals>
-                    <sales_order_creditmemo_totals>IS_CustTotal_Block_Adminhtml_Sales_Creditmemo
-                    </sales_order_creditmemo_totals>
+                    <sales_order_creditmemo_totals>IS_CustTotal_Block_Adminhtml_Sales_Creditmemo</sales_order_creditmemo_totals>
                 </rewrite>
             </adminhtml>
             <sales>
