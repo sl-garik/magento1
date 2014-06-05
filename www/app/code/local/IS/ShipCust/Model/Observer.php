@@ -8,9 +8,12 @@ class IS_ShipCust_Model_Observer
         $quoteItem = $event->getQuoteItem();
         $product = $event->getProduct();
         $quoteItem->setCustPriceShip($product->getCustPriceShip());
+        $prod_price = $product->getData('cust_price_ship');
 
-        //$eventmsg = "Current Event Triggered : <I>" . $event->getName() . "</I><br/> Currently Added Product : <I> " . $product->getName()."</I>";
-        $eventmsg = "Currently Added Product (Custome Shipping Price): <I> " . $product->getData('cust_price_ship') . "</I>";
+        // проверка на цену доставки продука, если ее нет, то сообщения не выводить
+        if (!empty($prod_price)) {
+            $eventmsg = "Currently Added Product (Custome Shipping Price): <I> " . $product->getData('cust_price_ship') . "</I>";
+        } else $eventmsg = '';
         //Adds Custom message to shopping cart
         Mage::getSingleton('checkout/session')->addSuccess($eventmsg);
     }
