@@ -1,0 +1,611 @@
+How to Add a my fee to the Total in Magento?
+Как добавить мою надбавку в блок Grand Total, в Magento?
+по мотивам статей:
+http://magento.ikantam.com/qa/how-add-discount-total-magento
+http://turnkeye.com/blog/magento-development-add-total-row-checkout/
+
+задача поставлена следующая:
+в зависимости от адреса (почтового индекса) вычисляется надбавка, которая учитывается в блоке GrandTotals 
+1. Подготовительный этап
+1.1. создать в базе MySQL таблицу "zip_code", которая содержит поля id, ZipCode (индекс), NewPrice (надбавка).
+1.2. создаем app\code\local\IS\CustTotal\etc\config.xml
+
+[code]
+<global>
+....
+    <blocks>
+        <custtotal>
+            <class>IS_CustTotal_Block</class>
+        </custtotal>
+    </blocks>
+    <models>
+        <custtotal>
+            <class>IS_CustTotal_Model</class>
+            <resourceModel>custtotal_mysql4</resourceModel>
+        </custtotal>
+        <custtotal_mysql4>
+            <class>IS_CustTotal_Model_Mysql4</class>
+            <entities>
+                <custtotal>
+                    <table>zip_price</table>
+                </custtotal>
+            </entities>
+        </custtotal_mysql4>
+    </models>
+
+    <helpers>
+        <custtotal>
+            <class>IS_CustTotal_Helper</class>
+        </custtotal>
+    </helpers>
+...
+<global>
+[/code]
+
+1.3. создаем www\app\code\local\IS\CustTotal\Model\CustTotal.php
+
+[code]
+class IS_CustTotal_Model_CustTotal extends Mage_Core_Model_Abstract
+{
+    public function _construct()
+    {
+        parent::_construct();
+        $this->_init('custtotal/custtotal');
+    }
+}
+[/code]
+
+1.4. создаем local\IS\CustTotal\Model\ папку Mysql4, в нем local\IS\CustTotal\Model\Mysql4\CustTotal.php
+
+[code]
+class IS_CustTotal_Model_Mysql4_CustTotal extends Mage_Core_Model_Mysql4_Abstract
+{
+    public function _construct()
+    {
+        $this->_init('custtotal/custtotal', 'id');
+    }
+}
+[/code]
+
+1.5. в папке IS\CustTotal\Model\Mysql4 создаем папку CustTotal, в нем IS\CustTotal\Model\Mysql4\CustTotal\Collection.php
+
+[code]
+class IS_CustTotal_Model_Mysql4_CustTotal_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
+{
+    public function _construct()
+    {
+        parent::_construct();
+        $this->_init('custtotal/custtotal');
+    }
+}
+[/code]
+
+1.6. так же создаем хелпер local\IS\CustTotal\Helper в нем local\IS\CustTotal\Helper\Data.php
+
+[code]
+class IS_CustTotal_Helper_Data extends Mage_Core_Helper_Abstract
+{
+
+}
+[/code]
+
+1.7. Также мы должны внести зменения в структыру некоторых таблиц в базе данных. А именно:
+в таблице sales_flat_order - добавить поля: fee_is, base_fee_is, fee_invioced_is, base_fee_invoiced_is, fee_refunded_is, base_fee_refunded_is.
+в sales_flat_quote_address добавить поля: fee_is, base_fee_is.
+Для этого создаем папку local\IS\CustTotal\sql, а в ней подпапку local\IS\CustTotal\sql\istotal_setup, где создаем файл
+local\IS\CustTotal\sql\istotal_setup\mysql4-install-1.0.0.php
+
+[code]
+$installer = $this;
+
+$installer->startSetup();
+
+$installer->run("
+ALTER TABLE `".$this->getTable('sales_flat_order')."` ADD  `fee_is` DECIMAL( 10, 2 ) NOT NULL;
+ALTER TABLE `".$this->getTable('sales_flat_order')."` ADD  `base_fee_is` DECIMAL( 10, 2 ) NOT NULL;
+ALTER TABLE `".$this->getTable('sales_flat_order')."` ADD  `fee_invoiced_is` DECIMAL( 10, 2 ) NOT NULL;
+ALTER TABLE `".$this->getTable('sales_flat_order')."` ADD  `base_fee_invoiced_is` DECIMAL( 10, 2 ) NOT NULL;
+ALTER TABLE `".$this->getTable('sales_flat_order')."` ADD  `fee_refunded_is` DECIMAL( 10, 2 ) NOT NULL;
+ALTER TABLE `".$this->getTable('sales_flat_order')."` ADD  `base_fee_refunded_is` DECIMAL( 10, 2 ) NOT NULL;
+ALTER TABLE `".$this->getTable('sales_flat_quote_address')."` ADD  `fee_is` DECIMAL( 10, 2 ) NOT NULL;
+ALTER TABLE `".$this->getTable('sales_flat_quote_address')."` ADD  `base_fee_is` DECIMAL( 10, 2 ) NOT NULL;
+");
+
+$installer->endSetup();
+[/code]
+
+В этих полях будет хранится информация надбавок для ордеров, инвойсов и возвратов (creditmemo).
+
+Для внесения этих изменений добавляем в local\IS\CustTotal\etc\config.xml
+
+[code]
+<resources>
+    <istotal_setup>
+        <setup>
+            <module>IS_CustTotal</module>
+        </setup>
+        <connection>
+            <use>core_setup</use>
+        </connection>
+    </istotal_setup>
+</resources>
+[/code]
+
+2. Данные в таблицу zip_code должны попадать через загрузку файла в back-end части.
+Для этого мы создаем в System-Configuration пункт "My Collection Tab" 
+(по мотивам: http://wp.me/p2IBEK-uT или http://www.ecomdev.org/2010/10/27/custom-configuration-fields-in-magento.html)
+
+2.1. создаем local\IS\CustTotal\etc\system.xml
+
+[code]
+<?xml version="1.0" ?>
+<config>
+    <tabs>
+        <mycustom_tab module="custtotal" translate="label">
+            <label>My Configuration Tab</label>
+            <sort_order>100</sort_order>
+        </mycustom_tab>
+    </tabs>
+    <sections>
+        <mycustom_section module="custtotal" translate="label">
+            <label>My Custom Section</label>
+            <sort_order>200</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <tab>mycustom_tab</tab>
+            <groups>
+                <mycustom_group translate="label">
+                    <label>My Custom Group</label>
+                    <comment>Some comment about my group</comment>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <file translate="label comment">
+                            <label>File</label>
+                            <frontend_type>file</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_file</backend_model>
+                            <upload_dir>var/uploads</upload_dir>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </file>
+                        <export translate="label">
+                            <label>Export</label>
+                            <frontend_model>custtotal/adminhtml_system_config_form_field_export</frontend_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </export>
+                    </fields>
+                </mycustom_group>
+            </groups>
+        </mycustom_section>
+    </sections>
+</config>
+[/code]
+
+2.2. создаем local\IS\CustTotal\etc\adminhtml.xml 
+[code]
+<?xml version="1.0" ?>
+<config>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <mycustom_section translate="title" module="custtotal">
+                                        <title>My Custom Section</title>
+                                        <sort_order>100</sort_order>
+                                    </mycustom_section>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>
+[/code]
+
+смотри рисунок...
+
+
+2.3. Создаем observer. Для этого в local\IS\CustTotal\etc\config.xml добавляем
+
+[code]
+<events>
+    <admin_system_config_changed_section_mycustom_section>
+        <observers>
+            <custtotal>
+                <type>singleton</type>
+                <class>custtotal/observer</class>
+                <method>handle_adminSystemConfigChangedSection</method>
+            </custtotal>
+        </observers>
+    </admin_system_config_changed_section_mycustom_section>
+</events>
+[/code]
+
+2.4. создаем local\IS\CustTotal\Model\Observer.php
+
+[code]
+class IS_CustTotal_Model_Observer
+{
+    public function handle_adminSystemConfigChangedSection($observer)
+    {
+        $file = Mage::getStoreConfig('mycustom_section/mycustom_group/file');
+        $dir = Mage::getBaseDir('var') . DS . 'uploads';
+        if (!empty($file)) {
+            $csv = new Varien_File_Csv();
+            $data = $csv->getData($dir . DS . $file);
+            for ($i = 1; $i < count($data); $i++) {
+                if (!empty($data[$i][0]) || !empty($data[$i][1])) {
+                    if ($i > 0) {
+                        $bd_table = Mage::getModel('custtotal/custtotal');
+                        $bd_table->setData('ZipCode', $data[$i][0]);
+                        $bd_table->setData('NewPrice', $data[$i][1]);
+                        $bd_table->save();
+                    }
+                }
+            }
+            Mage::getSingleton('adminhtml/session')->addSuccess('Message: Table is saving!');
+        }
+    }
+}
+[/code]
+
+2.5. При сохранении конфигурации секции берется загруженный файл и сохраняется в таблице zip_code
+Для этого в папке проекта Block\Adminhtml создаем local\IS\CustTotal\Block\Adminhtml\System\Config\Form\Field\Export.php
+
+[code]
+class IS_CustTotal_Block_Adminhtml_System_Config_Form_Field_Export extends Mage_Adminhtml_Block_System_Config_Form_Field
+{
+    public  function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
+    {
+        $this->setElement($element);
+        $url = $this->getUrl('catalog/product');
+        $html = $this->getLayout()->createBlock('adminhtml/widget_button')
+            ->setType('button')
+            ->setLabel('Export')
+            ->setOnClick("setLocation('$url')")
+            ->toHtml();
+        return $html;
+    }
+}
+[/code]
+
+3. Функционал такой: при добавлении продукта в корзину если покупатель залогинен, то анализируется его 
+адрес доставки на этом этапе и если указанный индекс есть в таблице zip_code, то надбавка отображается в блоке GrandTotals. 
+Если не залогинен, то это происходит на страницах Checkout. Надбавка отображается в блоке GrandTotals на последнем этапе Checkout 
+и в "My Account - My Orders" также. А еще надбавка должна отображается в back-end-e при просмотре ордера, а также при создании Invoice 
+и CreditMemo.
+Для этого:
+Должно быть 3 или 4 модельки (для квоты, для инвойса, для кредитмемо и для pdf, если необходимо)
+Должно быть 3 блочка для фронтенда и 3 для бекенда (ордер, инвойс кредитмемо соответственно)
+Для frontend: путь к модулю - /Block/Order
+app\code\local\[Company]\[Module]\Block\Order
+тут уже постоянная структура - необходимо создать именно такие файлы именно с такими названиями:
+app\code\local\[Company]\[Module]\Block\Order\Totals.php
+app\code\local\[Company]\[Module]\Block\Order\Invoice\Totals.php
+app\code\local\[Company]\[Module]\Block\Order\Creditmemo\Totals.php
+
+Для backend: путь к модулю - /Block/Adminhtml/Sales/Order
+аналогично необходимо создать такие же файлы:
+app\code\local\[Company]\[Module]\Block\Adminhtml\Sales\Order\Totals.php
+app\code\local\[Company]\[Module]\Block\Adminhtml\Sales\Order\Invoice\Totals.php
+app\code\local\[Company]\[Module]\Block\Adminhtml\Sales\Order\Creditmemo\Totals.php
+
+3.1. в local\IS\CustTotal\etc\config.xml прописываем следующее:
+
+[code]
+<global>
+......
+    <sales>
+        <quote>
+            <totals>
+                <myfee>
+                    <class>IS_CustTotal_Model_Quote_Total</class>
+                    <after>subtotal</after>
+                </myfee>
+            </totals>
+        </quote>
+        <order_invoice>
+            <totals>
+                <myfee>
+                    <class>IS_CustTotal_Model_Invoice_Total</class>
+                    <after>subtotal</after>
+                </myfee>
+            </totals>
+        </order_invoice>
+        <order_creditmemo>
+            <totals>
+                <myfee>
+                    <class>IS_CustTotal_Model_Creditmemo_Total</class>
+                    <after>subtotal</after>
+                </myfee>
+            </totals>
+        </order_creditmemo>
+    </sales>
+
+    <fieldsets>
+        <sales_convert_quote_address>
+            <fee_is>
+                <to_order>*</to_order>
+            </fee_is>
+            <base_fee_is>
+                <to_order>*</to_order>
+            </base_fee_is>
+        </sales_convert_quote_address>
+    </fieldsets>
+</global>
+
+[/code]
+
+3.2. изходя из выше указанного создаем папку "Quote" с local\IS\CustTotal\Model\Quote\Total.php
+выполняется в front-end-e на страницах корзины и checkout-а, высчтывает надбавку и отображает ее в блоке 
+GrantTotal.
+
+[code]
+class IS_CustTotal_Model_Quote_Total extends Mage_Sales_Model_Quote_Address_Total_Abstract
+{
+    public function __construct()
+    {
+        $this->setCode('is_custtotal');
+    }
+
+    public function collect(Mage_Sales_Model_Quote_Address $address)
+    {
+        if ($address->getData('address_type') == 'billing') {
+            return $this;
+        }
+        $zipcode = $address->getData('postcode');
+        $collection = Mage::getModel('custtotal/custtotal')->getCollection()->addFilter('ZipCode', $zipcode);
+        $arr_zip = $collection->getData();
+
+        if (!empty($arr_zip)) {
+            $key = array_search($zipcode, $arr_zip, true);
+            foreach ($arr_zip as $key => $value) {
+                $amt = $value['NewPrice'];
+            }
+        } else {
+            $amt = 0;
+        }
+
+            $grandTotal = $address->getGrandTotal();
+            $baseGrandTotal = $address->getBaseGrandTotal();
+
+            $address->setFeeIs($amt);
+            $address->setBaseFeeIs($amt);
+
+            $address->setGrandTotal($grandTotal + $address->getFeeIs());
+            $address->setBaseGrandTotal($baseGrandTotal + $address->getBaseFeeIs());
+
+        return $this;
+    }
+
+    public function fetch(Mage_Sales_Model_Quote_Address $address)
+    {
+        if ($address->getData('address_type') == 'billing')
+            return $this;
+
+        $amt = $address->getFeeIs();
+        if ($amt != 0) {
+            $address->addTotal(array(
+                'code' => $this->getCode(),
+                'title' => Mage::helper('custtotal')->__('myFee'),
+                'value' => $amt
+            ),array('shipping', 'tax'));
+        }
+        return $address;
+    }
+}
+[/code]
+
+3.3. создаем папку "Invoice" с local\IS\CustTotal\Model\Invoice\Total.php
+выполняется в backend-e при нажатии кнопки "Invioce". Выбирает из ордера в базе надбавку и отображает ее в блоке 
+GrandTotals.
+
+[code]
+class IS_CustTotal_Model_Invoice_Total extends Mage_Sales_Model_Order_Invoice_Total_Abstract
+{
+    public function collect(Mage_Sales_Model_Order_Invoice $invoice)
+    {
+        $order = $invoice->getOrder();
+        $amt = $order->getFeeIS();
+        $baseAmt = $order->getBaseFeeIS();
+
+        if ($amt) {
+            $order->setFeeInvoicedIS($amt);
+            $order->setBaseFeeInvoicedIS($baseAmt);
+
+            $invoice->setGrandTotal($invoice->getGrandTotal() + $order->getFeeInvoicedIS());
+            $invoice->setBaseGrandTotal($invoice->getBaseGrandTotal() + $order->getBaseFeeInvoicedIS());
+        }
+        return $this;
+    }
+}
+[/code]
+
+3.4. создаем папку "Creditmemo" с local\IS\CustTotal\Model\Creditmemo\Total.php
+выполняется в backend-e при нажатии кнопки "Credit Memo". Выбирает из ордера в базе надбавку и отображает ее в блоке 
+GrandTotals.
+
+[code]
+class IS_CustTotal_Model_Creditmemo_Total extends Mage_Sales_Model_Order_Creditmemo_Total_Abstract
+{
+    public function collect(Mage_Sales_Model_Order_Creditmemo $creditmemo)
+    {
+        $order = $creditmemo->getOrder();
+        $amt = $order->getFeeIS();
+        $baseAmt = $order->getBaseFeeIS();
+        if ($amt) {
+            $order->setFeeRefundedIS($amt);
+            $order->setBaseFeeRefundedIS($baseAmt);
+
+            $creditmemo->setGrandTotal($creditmemo->getGrandTotal() + $order->getFeeRefundedIs());
+            $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $order->getBaseFeeRefundedIs());
+        }
+        return $this;
+    }
+}
+[/code]
+
+4. в папке local\IS\CustTotal\Block создаем папки блоков для отображения информации с надбавкой в ордерах: 
+local\IS\CustTotal\Block\Order и для back-end: local\IS\CustTotal\Block\Adminhtml
+
+4.1. создаем local\IS\CustTotal\Block\Order\Totals.php
+обображает надбавку в "My Account" в "My Orders" при просмотре ордера "ViewOrder" в блоке GrandTotals:
+
+[code]
+class IS_CustTotal_Block_Order_Totals extends Mage_Sales_Block_Order_Totals
+{
+    protected function _initTotals() {
+        parent::_initTotals();
+        $amt = $this->getSource()->getFeeIS();
+        $baseAmt = $this->getSource()->getBaseFeeIS();
+        if ($amt != 0) {
+            $this->addTotal(new Varien_Object(array(
+                'code' => 'is_custtotal',
+                'value' => $amt,
+                'base_value' => $baseAmt,
+                'label' => 'myFee',
+            ), array('shipping', 'tax')));
+        }
+        return $this;
+    }
+}
+[/code]
+
+4.2. Создаем local\IS\CustTotal\Block\Order\Invoice\Totals.php
+обображает надбавку  в блоке GrandTotals. Находится в "My Account" в "My Orders" при просмотре ордера 
+"ViewOrder" при просмотре "Invoices" (если он создан в back-end):
+
+[code]
+class IS_CustTotal_Block_Order_Invoice_Totals extends Mage_Sales_Block_Order_Invoice_Totals
+{
+    protected function _initTotals() {
+        parent::_initTotals();
+        $amt = $this->getOrder()->getFeeInvoicedIS();
+        $baseAmt = $this->getOrder()->getBaseFeeInvoicedIS();
+        if ($amt != 0) {
+            $this->addTotal(new Varien_Object(array(
+                'code' => 'is_custtotal',
+                'value' => $amt,
+                'base_value' => $baseAmt,
+                'label' => 'myFee',
+            )), array('shipping', 'tax'));
+        }
+        return $this;
+    }
+}
+[/code]
+
+4.3. создаем local\IS\CustTotal\Block\Order\Creditmemo\Totals.php
+обображает надбавку  в блоке GrandTotals. Находится в "My Account" в "My Orders" при просмотре ордера 
+"ViewOrder" при просмотре "Refunds" (если он создан в back-end):
+
+[code]
+class IS_CustTotal_Block_Order_Creditmemo_Totals extends Mage_Sales_Block_Order_Creditmemo_Totals
+{
+    protected function _initTotals() {
+        parent::_initTotals();
+        $order = $this->getOrder();
+        $amt = $this->getOrder()->getFeeRefundedIS();
+        $baseAmt = $this->getOrder()->getBaseFeeRefundedIS();
+        if ($amt != 0) {
+            $this->addTotal(new Varien_Object(array(
+                'code' => 'is_custtotal',
+                'value' => $amt,
+                'base_value' => $baseAmt,
+                'label' => 'myFee',
+            )), array('shipping', 'tax'));
+        }
+        return $this;
+    }
+}
+[/code]
+
+4.4. создаем local\IS\CustTotal\Block\Adminhtml\Sales\Order\Totals.php
+обображает надбавку  в блоке GrandTotals, которая отображается в back-end-е в Sales-Orders при просмотре ордера:
+
+[code]
+class IS_CustTotal_Block_Adminhtml_Sales_Order_Totals extends Mage_Adminhtml_Block_Sales_Order_Totals
+{
+    protected function _initTotals()
+    {
+        parent::_initTotals();
+        $amt = $this->getSource()->getFeeIS();
+        $baseAmt = $this->getSource()->getBaseFeeIS();
+        if ($amt) {
+            $this->addTotalBefore(new Varien_Object(array(
+                'code'      => 'is_custtotal',
+                'value'     => $amt,
+                'base_value'=> $baseAmt,
+                'label'     => 'myFee',
+            )), array('shipping', 'tax'));
+        }
+        return $this;
+    }
+}
+[/code]
+
+4.5. Создаем local\IS\CustTotal\Block\Adminhtml\Sales\Order\Invoice\Totals.php
+обображает надбавку в блоке GrandTotals, которая отображается в back-end-е Sales-Orders при просмотре ордера, 
+если создан Invoice и в закладке "Invoices":
+
+[code]
+class IS_CustTotal_Block_Adminhtml_Sales_Order_Invoice_Totals extends Mage_Adminhtml_Block_Sales_Order_Invoice_Totals
+{
+    protected function _initTotals()
+    {
+        parent::_initTotals();
+        $order = $this->getOrder();
+        $amt = $this->getOrder()->getFeeInvoicedIS();
+        $baseAmt = $this->getOrder()->getBaseFeeInvoicedIS();
+        if ($amt) {
+            $this->addTotalBefore(new Varien_Object(array(
+                'code'      => 'is_custtotal',
+                'value'     => $amt,
+                'base_value'=> $baseAmt,
+                'label'     => 'myFee',
+            ), array('shipping', 'tax')));
+        }
+    }
+}
+[/code]
+
+4.6. Создаем local\IS\CustTotal\Block\Adminhtml\Sales\Order\Creditmemo\Totals.php
+обображает надбавку в блоке GrandTotals, которая отображается в back-end-е Sales-Orders при просмотре ордера, 
+если создан CreditMemo и в закладке "CreditMemo":
+
+[code]
+class IS_CustTotal_Block_Adminhtml_Sales_Order_Creditmemo_Totals extends Mage_Adminhtml_Block_Sales_Order_Creditmemo_Totals
+{
+    protected function _initTotals()
+    {
+        parent::_initTotals();
+        $order = $this->getOrder();
+        $amt = $this->getOrder()->getFeeRefundedIS();
+        $baseAmt = $this->getOrder()->getBaseFeeRefundedIS();
+        if ($amt) {
+            $this->addTotalBefore(new Varien_Object(array(
+                'code'      => 'is_custtotal',
+                'value'     => $amt,
+                'base_value'=> $baseAmt,
+                'label'     => 'myFee',
+            ), array('shipping', 'tax')));
+        }
+    }
+}
+[/code]
+
+как-то так. Код можно посмотреть в https://github.com/sl-garik/magento1/tree/master/www
